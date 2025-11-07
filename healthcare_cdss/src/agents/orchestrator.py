@@ -231,29 +231,33 @@ def create_clinical_workflow() -> StateGraph:
     """
     Create the main CDSS workflow graph
     
-    Phase 1 implements a basic linear workflow:
-    analyze_case -> generate_todos -> safety_check -> END
+    Phase 2 workflow includes symptom analysis:
+    analyze_case -> generate_todos -> symptom_analyzer -> safety_check -> END
     
-    Future phases will add:
-    - Parallel agent execution
-    - Conditional routing based on case type
-    - Iterative refinement loops
+    The symptom_analyzer node performs:
+    - Differential diagnosis generation
+    - Medical literature search
+    - Evidence collection
     
     Returns:
         Compiled LangGraph workflow
     """
+    from .symptom_analyzer import symptom_analyzer_node
+    
     # Create workflow graph
     workflow = StateGraph(ClinicalState)
     
     # Add nodes
     workflow.add_node("analyze_case", analyze_case_node)
     workflow.add_node("generate_todos", generate_todos_node)
+    workflow.add_node("symptom_analyzer", symptom_analyzer_node)  # NEW in Phase 2
     workflow.add_node("safety_check", safety_check_node)
     
     # Define flow
     workflow.set_entry_point("analyze_case")
     workflow.add_edge("analyze_case", "generate_todos")
-    workflow.add_edge("generate_todos", "safety_check")
+    workflow.add_edge("generate_todos", "symptom_analyzer")  # NEW in Phase 2
+    workflow.add_edge("symptom_analyzer", "safety_check")
     workflow.add_edge("safety_check", END)
     
     # Compile and return

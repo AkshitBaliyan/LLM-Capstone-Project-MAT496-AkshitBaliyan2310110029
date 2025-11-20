@@ -53,12 +53,13 @@ def symptom_analyzer_node(state: ClinicalState) -> ClinicalState:
         for key, value in result.update.items():
             updated_state[key] = value
     
-    # Step 2: Search medical literature if needed
+    # Step 2: Search medical literature and web if needed
     if updated_state.get("differential_diagnosis"):
         top_diagnosis = updated_state["differential_diagnosis"][0]["condition"]
         
-        print(f"\nStep 2: Searching literature for: {top_diagnosis}")
+        print(f"\nStep 2: Searching medical sources for: {top_diagnosis}")
         
+        # Search PubMed for peer-reviewed literature
         lit_search_result = search_medical_literature.invoke({
             "clinical_question": f"{top_diagnosis} diagnosis and management",
             "state": updated_state,
@@ -69,6 +70,30 @@ def symptom_analyzer_node(state: ClinicalState) -> ClinicalState:
         # Update state with literature findings
         if hasattr(lit_search_result, 'update') and lit_search_result.update:
             for key, value in lit_search_result.update.items():
+                if key == "messages":
+                    updated_state["messages"] = updated_state.get("messages", []) + value
+                elif key == "files":
+                    updated_state["files"] = {**updated_state.get("files", {}), **value}
+                elif key == "evidence_sources":
+                    updated_state["evidence_sources"] = updated_state.get("evidence_sources", []) + value
+                else:
+                    updated_state[key] = value
+        
+        # Search web for current guidelines and information (Phase 7)
+        from ..tools.tavily_search import search_medical_web
+        
+        print(f"\nStep 2b: Searching web for current information...")
+        
+        web_search_result = search_medical_web.invoke({
+            "clinical_question": f"{top_diagnosis} clinical guidelines and current information",
+            "state": updated_state,
+            "tool_call_id": f"web_search_{state['session_id'][:8]}",
+            "max_results": 2
+        })
+        
+        # Update state with web search findings
+        if hasattr(web_search_result, 'update') and web_search_result.update:
+            for key, value in web_search_result.update.items():
                 if key == "messages":
                     updated_state["messages"] = updated_state.get("messages", []) + value
                 elif key == "files":

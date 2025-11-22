@@ -9,7 +9,7 @@ from typing import Annotated, List, Optional
 from datetime import datetime
 from langchain_core.tools import tool
 from langchain.chat_models import init_chat_model
-from langgraph.prebuilt import InjectedState, InjectedToolCallId
+from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
 from langchain_core.messages import ToolMessage
 from pydantic import BaseModel, Field
@@ -142,7 +142,7 @@ Be concise and clinically focused."""
 def search_medical_literature(
     clinical_question: str,
     state: Annotated[ClinicalState, InjectedState],
-    tool_call_id: Annotated[str, InjectedToolCallId],
+    tool_call_id: str = "literature_search",
     max_results: Annotated[int, "Maximum number of articles to retrieve"] = 3
 ) -> Command:
     """Search medical literature (PubMed) for evidence-based information.

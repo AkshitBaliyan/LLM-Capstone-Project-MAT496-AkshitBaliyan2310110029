@@ -8,7 +8,7 @@ differential diagnoses using structured LLM outputs.
 from typing import Annotated, List
 from langchain_core.tools import tool
 from langchain.chat_models import init_chat_model
-from langgraph.prebuilt import InjectedState, InjectedToolCallId
+from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
 from langchain_core.messages import ToolMessage
 from pydantic import BaseModel, Field
@@ -116,7 +116,7 @@ Provide a thorough, evidence-based analysis."""
 @tool(parse_docstring=True)
 def analyze_symptoms_tool(
     state: Annotated[ClinicalState, InjectedState],
-    tool_call_id: Annotated[str, InjectedToolCallId]
+    tool_call_id: str = "symptom_analysis"
 ) -> Command:
     """Analyze patient symptoms and generate differential diagnosis.
     

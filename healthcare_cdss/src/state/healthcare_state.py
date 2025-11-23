@@ -8,7 +8,8 @@ This module defines the state schema for the CDSS system, including:
 - Safety alerts and compliance tracking
 """
 
-from typing import TypedDict, Annotated, Literal, Optional
+from typing_extensions import TypedDict
+from typing import Annotated, Literal, Optional, List, Dict
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 from langgraph.graph import add_messages

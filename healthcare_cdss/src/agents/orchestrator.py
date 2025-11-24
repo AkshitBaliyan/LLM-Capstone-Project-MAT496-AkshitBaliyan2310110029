@@ -17,7 +17,7 @@ from ..config.langsmith_config import trace_clinical_workflow
 
 # Initialize LLM
 model = init_chat_model(
-    "anthropic:claude-sonnet-4-20250514",
+    "openai:gpt-4o",
     temperature=0.0  # Deterministic for clinical decisions
 )
 

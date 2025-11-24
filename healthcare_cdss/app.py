@@ -89,7 +89,7 @@ def main():
         st.markdown("""
         This CDSS uses:
         - **LangGraph** for workflow
-        - **Claude Sonnet 4** for analysis
+        - **OpenAI GPT-4** for analysis
         - **PubMed** for evidence
         - **LangSmith** for tracing
         """)
@@ -317,8 +317,8 @@ def display_results(result):
 
 if __name__ == "__main__":
     # Check for API keys
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        st.error("❌ ANTHROPIC_API_KEY not found in environment variables")
+    if not os.getenv("OPENAI_API_KEY"):
+        st.error("❌ OPENAI_API_KEY not found in environment variables")
         st.info("Please create a .env file with your API keys. See .env.example for template.")
         st.stop()
     

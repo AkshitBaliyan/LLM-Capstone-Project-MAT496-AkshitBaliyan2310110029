@@ -18,7 +18,7 @@ from ..state.healthcare_state import ClinicalState, Diagnosis
 
 # Initialize LLM for symptom analysis
 symptom_analysis_model = init_chat_model(
-    "anthropic:claude-sonnet-4-20250514",
+    "openai:gpt-4o",
     temperature=0.0  # Deterministic for medical analysis
 )
 

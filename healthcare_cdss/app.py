@@ -25,33 +25,112 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS - Enhanced Modern Design
 st.markdown("""
 <style>
+    /* Main header with gradient */
     .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #1f77b4;
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         text-align: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
+        animation: fadeIn 1s ease-in;
     }
+    
     .sub-header {
-        font-size: 1.2rem;
-        color: #666;
+        font-size: 1.3rem;
+        color: #718096;
         text-align: center;
         margin-bottom: 2rem;
+        font-weight: 300;
     }
+    
+    /* Diagnosis cards with hover effect */
     .diagnosis-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-    }
-    .alert-box {
-        background-color: #ffebee;
-        border-left: 4px solid #f44336;
-        padding: 1rem;
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
         margin: 1rem 0;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .diagnosis-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+    }
+    
+    /* Alert box with better styling */
+    .alert-box {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border-left: 5px solid #ef4444;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(239,68,68,0.1);
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    
+    /* Button enhancements */
+    .stButton>button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(102,126,234,0.3);
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 12px rgba(102,126,234,0.4);
+    }
+    
+    /* Card containers */
+    .stExpander {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Progress indicators */
+    .stSpinner > div {
+        border-color: #667eea !important;
+    }
+    
+    /* Input fields */
+    .stTextInput>div>div>input, .stNumberInput>div>div>input {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+    
+    /* Better spacing */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -85,14 +164,9 @@ def main():
             )
         
         st.markdown("---")
-        st.markdown("### About")
-        st.markdown("""
-        This CDSS uses:
-        - **LangGraph** for workflow
-        - **OpenAI GPT-4** for analysis
-        - **PubMed** for evidence
-        - **LangSmith** for tracing
-        """)
+        
+        # Add helpful info
+        st.info("💡 Select a demo case or enter patient data manually to begin analysis")
     
     # Main content area
     if input_mode == "Use Demo Case":
@@ -117,26 +191,39 @@ def run_demo_case(case_name):
     
     state = cases[case_map[case_name]]
     
-    # Display patient info
+    # Display patient info with enhanced styling
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Patient Information")
+        st.markdown("### 👤 Patient Information")
         patient = state["patient_info"]
-        st.write(f"**Age:** {patient.age} years")
-        st.write(f"**Sex:** {patient.sex}")
-        st.write(f"**BMI:** {patient.get_bmi():.1f}")
-        st.write(f"**Allergies:** {', '.join(patient.allergies) if patient.allergies else 'None'}")
-       
-        if patient.chronic_conditions:
-            st.write(f"**Chronic Conditions:** {', '.join(patient.chronic_conditions)}")
+        
+        # Create info items with icons
+        st.markdown(f"""
+        <div style='background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;'>
+            <p><strong>📅 Age:</strong> {patient.age} years</p>
+            <p><strong>⚧ Sex:</strong> {patient.sex}</p>
+            <p><strong>📊 BMI:</strong> {patient.get_bmi():.1f}</p>
+            <p><strong>⚠️ Allergies:</strong> {', '.join(patient.allergies) if patient.allergies else 'None'}</p>
+            {f"<p><strong>🏥 Chronic Conditions:</strong> {', '.join(patient.chronic_conditions)}</p>" if patient.chronic_conditions else ""}
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
-        st.subheader("Presenting Symptoms")
-        st.write(f"**Chief Complaint:** {state['chief_complaint']}")
+        st.markdown("### 🩺 Presenting Symptoms")
+        
+        st.markdown(f"""
+        <div style='background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;'>
+            <p><strong>Chief Complaint:</strong></p>
+            <p style='font-size: 1.1rem; color: #667eea; font-weight: 600;'>{state['chief_complaint']}</p>
+            <p><strong>Symptoms:</strong></p>
+        """, unsafe_allow_html=True)
         
         for symptom in state["symptoms"]:
-            st.write(f"- {symptom.description.title()}: {symptom.severity} severity")
+            severity_emoji = {"mild": "🟢", "moderate": "🟡", "severe": "🔴"}
+            st.markdown(f"{severity_emoji.get(symptom.severity, '⚪')} **{symptom.description.title()}**: {symptom.severity} severity")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
     
     # Run analysis button
     if st.button("🔬 Run Clinical Analysis", type="primary", use_container_width=True):

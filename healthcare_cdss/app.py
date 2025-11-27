@@ -14,7 +14,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from src.state import PatientInfo, Symptom, create_initial_state
 from src.agents import run_clinical_analysis
-from examples import get_all_demo_cases
 
 
 # Page configuration
@@ -22,7 +21,7 @@ st.set_page_config(
     page_title="Healthcare CDSS",
     page_icon="🏥",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"  # Hide sidebar since we don't use it
 )
 
 # Custom CSS - Enhanced Modern Design
@@ -143,97 +142,8 @@ def main():
     st.markdown('<div class="main-header">🏥 Healthcare Clinical Decision Support System</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">AI-Powered Clinical Analysis with LangGraph</div>', unsafe_allow_html=True)
     
-    # Sidebar
-    with st.sidebar:
-        st.header("⚙️ Configuration")
-        
-        # Input mode selection
-        input_mode = st.radio(
-            "Input Mode",
-            ["Use Demo Case", "Manual Input"],
-            help="Choose between pre-loaded demo cases or manual patient entry"
-        )
-        
-        st.markdown("---")
-        
-        if input_mode == "Use Demo Case":
-            demo_case = st.selectbox(
-                "Select Demo Case",
-                ["URI (Routine)", "Cardiac Emergency", "Pediatric", "Geriatric"],
-                help="Pre-loaded clinical scenarios for demonstration"
-            )
-        
-        st.markdown("---")
-        
-        # Add helpful info
-        st.info("💡 Select a demo case or enter patient data manually to begin analysis")
-    
-    # Main content area
-    if input_mode == "Use Demo Case":
-        run_demo_case(demo_case)
-    else:
-        run_manual_input()
-
-
-def run_demo_case(case_name):
-    """Run analysis on a demo case"""
-    
-    st.header(f"📋 Demo Case: {case_name}")
-    
-    # Load demo case
-    cases = get_all_demo_cases()
-    case_map = {
-        "URI (Routine)": "uri",
-        "Cardiac Emergency": "cardiac_emergency",
-        "Pediatric": "pediatric",
-        "Geriatric": "geriatric"
-    }
-    
-    state = cases[case_map[case_name]]
-    
-    # Display patient info with enhanced styling
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### 👤 Patient Information")
-        patient = state["patient_info"]
-        
-        # Create info items with icons
-        st.markdown(f"""
-        <div style='background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;'>
-            <p><strong>📅 Age:</strong> {patient.age} years</p>
-            <p><strong>⚧ Sex:</strong> {patient.sex}</p>
-            <p><strong>📊 BMI:</strong> {patient.get_bmi():.1f}</p>
-            <p><strong>⚠️ Allergies:</strong> {', '.join(patient.allergies) if patient.allergies else 'None'}</p>
-            {f"<p><strong>🏥 Chronic Conditions:</strong> {', '.join(patient.chronic_conditions)}</p>" if patient.chronic_conditions else ""}
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("### 🩺 Presenting Symptoms")
-        
-        st.markdown(f"""
-        <div style='background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;'>
-            <p><strong>Chief Complaint:</strong></p>
-            <p style='font-size: 1.1rem; color: #667eea; font-weight: 600;'>{state['chief_complaint']}</p>
-            <p><strong>Symptoms:</strong></p>
-        """, unsafe_allow_html=True)
-        
-        for symptom in state["symptoms"]:
-            severity_emoji = {"mild": "🟢", "moderate": "🟡", "severe": "🔴"}
-            st.markdown(f"{severity_emoji.get(symptom.severity, '⚪')} **{symptom.description.title()}**: {symptom.severity} severity")
-        
-        st.markdown("</div>", unsafe_allow_html=True)
-    
-    # Run analysis button
-    if st.button("🔬 Run Clinical Analysis", type="primary", use_container_width=True):
-        with st.spinner("Analyzing patient case... This may take 20-30 seconds"):
-            try:
-                result = run_clinical_analysis(state)
-                display_results(result)
-            except Exception as e:
-                st.error(f"❌ Error during analysis: {str(e)}")
-                st.exception(e)
+    # Directly show manual input form
+    run_manual_input()
 
 
 def run_manual_input():

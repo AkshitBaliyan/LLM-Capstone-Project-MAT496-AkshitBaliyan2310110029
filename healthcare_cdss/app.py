@@ -140,16 +140,14 @@ def main():
     
     # Header
     st.markdown('<div class="main-header">🏥 Healthcare Clinical Decision Support System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">AI-Powered Clinical Analysis with LangGraph</div>', unsafe_allow_html=True)
     
     # Directly show manual input form
     run_manual_input()
 
 
 def run_manual_input():
-    """Run analysis with manual patient input"""
     
-    st.header("📝 Manual Patient Entry")
+    st.header("Patient Entry")
     
     # Patient Information
     st.subheader("Patient Demographics")
